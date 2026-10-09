@@ -212,6 +212,7 @@ function drawChart() {
   const W = Math.max(320, svg.clientWidth || 1000), H = svg.clientHeight || 380;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.innerHTML = "";
+  const narrow = W < 640;
   const L = 58, R = W - 14, T = 14, STRIP_H = 12, STRIP_GAP = 4, nS = tl.symbols.length;
   const B = H - 34 - nS * (STRIP_H + STRIP_GAP) - 10;     // bottom of the price plot
   const pts = tl.points, t0 = new Date(pts[0].t).getTime(), t1 = new Date(pts[pts.length - 1].t).getTime();
@@ -251,7 +252,7 @@ function drawChart() {
       plot.append(svgEl("rect", { x: cs, y: y(Math.min(up, hi)), width: R - cs, height: Math.max(0, y(Math.max(dn, lo)) - y(Math.min(up, hi))), fill: "var(--band)" }));
     for (const edge of [up, dn]) if (edge < hi && edge > lo)
       plot.append(svgEl("line", { x1: cs, x2: R, y1: y(edge), y2: y(edge), stroke: "var(--accent)", "stroke-dasharray": "2 4", opacity: .7 }));
-    if (up >= hi || dn <= lo) bandNote = `± q99 ${upct(q)} = ${px(dn)} … ${px(up)} — wider than this scale`;
+    if (up >= hi || dn <= lo) bandNote = narrow ? `± q99 ${upct(q)}: off-scale` : `± q99 ${upct(q)} = ${px(dn)} … ${px(up)} — wider than this scale`;
   }
   // grid + y labels
   const ticks = 5;
@@ -265,11 +266,11 @@ function drawChart() {
   // x labels at 00:00 and 12:00 US Eastern
   const etHour = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hourCycle: "h23" });
   for (let tt = Math.ceil(t0 / 3600e3) * 3600e3; tt <= t1; tt += 3600e3) {
-    if (Number(etHour.format(new Date(tt))) % 12 !== 0) continue;
+    if (Number(etHour.format(new Date(tt))) % (narrow ? 24 : 12) !== 0) continue;
     const iso = new Date(tt).toISOString(), xx = x(iso);
     svg.append(svgEl("line", { x1: xx, x2: xx, y1: T, y2: B, stroke: "var(--grid)" }));
     const lab = svgEl("text", { x: xx, y: H - 10, "text-anchor": "middle" });
-    lab.textContent = et(iso).replace(" ET", "");
+    lab.textContent = narrow ? et(iso).slice(0, 3) : et(iso).replace(" ET", "");
     svg.append(lab);
   }
   const etTag = svgEl("text", { x: R, y: H - 24, "text-anchor": "end" });
@@ -285,7 +286,7 @@ function drawChart() {
   if (ref) {
     plot.append(svgEl("line", { x1: cs, x2: R, y1: y(ref), y2: y(ref), stroke: "var(--text)", "stroke-dasharray": "5 4", "stroke-width": 1.2, opacity: .75 }));
     const lab = svgEl("text", { x: R - 6, y: y(ref) + 15, class: "lbl-strong", "text-anchor": "end" });
-    lab.textContent = `Friday close ${px(ref)} (reference)`;
+    lab.textContent = narrow ? `Fri close ${px(ref)}` : `Friday close ${px(ref)} (reference)`;
     plot.append(lab);
   }
 
