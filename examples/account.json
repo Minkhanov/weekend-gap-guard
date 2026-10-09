@@ -1,0 +1,13 @@
+{
+  "name": "example prop-style book",
+  "equity": 25000.0,
+  "day_start_equity": 25210.0,
+  "floor": 22500.0,
+  "daily_loss_limit": 1250.0,
+  "profit_target": 2500.0,
+  "borrowed_usd": 0.0,
+  "holdings": [
+    {"symbol": "NVDAon", "ticker": "NVDA", "notional_usd": 4200.0, "stop_pct": 0.03},
+    {"symbol": "SPYB", "ticker": "SPY", "notional_usd": 3000.0, "stop_pct": 0.015}
+  ]
+}

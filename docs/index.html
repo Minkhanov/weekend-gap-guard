@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekend Gap Guard</title>
+<meta name="description" content="Pre-trade risk gate for tokenized stocks on BNB Chain: what to allow, cut or block while the stock market is closed. Real BSC data, public endpoints, no keys.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="#">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7L16 2Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 18h5l2-6 2 9 2-3h3" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Weekend Gap Guard</span>
+    </a>
+    <nav class="nav">
+      <a href="#replay">Replay</a>
+      <a href="#live">Live board</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#how">How it works</a>
+      <a id="repo-link" href="https://github.com/Minkhanov/weekend-gap-guard">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">BNB Hack · Tokenized Stocks Edition</p>
+    <h1>Tokenized stocks trade all weekend.<br><span class="hl">Their reference price doesn't.</span></h1>
+    <p class="lede">From Friday 16:00 ET to Monday 09:30 ET the stock market prints nothing, but Ondo, xStocks and bStocks
+      tokens keep trading on BNB Chain. A stop-loss cannot fill at a price the market never prints, so an agent that sizes
+      weekend trades like weekday trades is taking a risk it cannot see. <strong>Weekend Gap Guard</strong> is the
+      pre-trade gate in front of the wallet: every order comes back <span class="pill allow">ALLOW</span>
+      <span class="pill reduce">REDUCE</span> or <span class="pill block">BLOCK</span>, with the reason.</p>
+    <div class="kpis" id="kpis">
+      <div class="kpi skeleton"></div><div class="kpi skeleton"></div><div class="kpi skeleton"></div>
+    </div>
+    <p class="fine" id="data-note"></p>
+  </section>
+
+  <section id="replay" class="card">
+    <div class="card-head">
+      <div>
+        <h2>Replay a real weekend</h2>
+        <p class="sub">Hourly on-chain prices of every issuer of one ticker on BSC, and what the guard said about a
+          <span class="mono" id="order-usd">$2,000</span> buy at each hour. No look-ahead: each decision sees only data available at that moment.</p>
+      </div>
+      <div class="tabs" id="scenario-tabs" role="tablist"></div>
+    </div>
+    <p class="blurb" id="scenario-blurb"></p>
+    <div class="legend" id="legend"></div>
+    <div class="chart-box">
+      <svg id="chart" viewBox="0 0 1000 380" role="img" aria-label="Per-share prices across the weekend"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="outcome" id="outcome"></div>
+
+    <div class="decision-grid">
+      <div class="panel" id="decision">
+        <div class="panel-head">
+          <div class="issuer-tabs" id="issuer-tabs" role="tablist"></div>
+          <div class="when mono" id="when"></div>
+        </div>
+        <div id="decision-body"></div>
+      </div>
+      <aside class="panel side">
+        <h3>Key moments</h3>
+        <div class="moments" id="moments"></div>
+        <h3>Gap model for this weekend</h3>
+        <dl class="kv" id="model"></dl>
+        <h3>Agentic Wallet hand-off</h3>
+        <p class="sub">The guard never signs. It hands the size it allows to the
+          <span class="mono">binance-agentic-wallet</span> skill as a quote; the user confirms in the wallet.</p>
+        <pre class="code" id="baw"></pre>
+      </aside>
+    </div>
+  </section>
+
+  <section id="live" class="card">
+    <div class="card-head">
+      <div>
+        <h2>Live board — 30 stock tokens on BSC</h2>
+        <p class="sub" id="live-sub">Recorded from the public Binance Wallet endpoints by <span class="mono">gapguard record</span>.</p>
+      </div>
+      <div class="cycle-nav" id="cycle-nav"></div>
+    </div>
+    <div class="table-wrap"><table class="board" id="board"></table></div>
+    <p class="fine">Per-share price = token price ÷ shares multiplier. Δ median = distance from the cross-issuer median for the same stock.
+      A quote counts as stale when it is older than 15 min or the endpoint reports a 24 h change of exactly 0 (nothing traded for a day).</p>
+  </section>
+
+  <section id="evidence" class="card">
+    <div class="card-head">
+      <div>
+        <h2>Does the gap model hold?</h2>
+        <p class="sub">Out-of-sample: for every weekend, the model is fitted on data before Friday's close and compared with what Monday did.</p>
+      </div>
+    </div>
+    <div class="evidence-grid">
+      <div class="table-wrap"><table class="calib" id="calib"></table></div>
+      <div class="panel" id="stress"></div>
+    </div>
+    <p class="fine" id="calib-note"></p>
+  </section>
+
+  <section id="how" class="card">
+    <h2>How it works</h2>
+    <ol class="pipeline">
+      <li><b>Data integrity</b><span>No price, a quote older than 15 min, a pool that has not traded for 24 h, or no reference while the market is shut → BLOCK. Fail closed.</span></li>
+      <li><b>Venue status</b><span>ASSET_PAUSED / MARKET_PAUSED / maintenance → BLOCK. Earnings-limited → gap ×2.5, size ×0.5.</span></li>
+      <li><b>Session phase</b><span>open · pre-close (last hour) · closed · pre-open (last 2 h). Holiday weekends cut deeper.</span></li>
+      <li><b>Risk per dollar</b><span>While the stock trades: the stop. While it is shut: the 99 % weekend-gap quantile, stretched by any upward drift you buy into. ×1.43 for the worst fill we have seen.</span></li>
+      <li><b>Stale reference</b><span>Weekend drift vs Friday close (in σ of a weekend move); distance from the cross-issuer median; premium to a live stock print.</span></li>
+      <li><b>Caps</b><span>Position cap by phase, gross-exposure ("leverage") cap, issuer notional limit, and account guards: static floor, daily loss limit, 40 % consistency rule.</span></li>
+      <li><b>Verdict</b><span>allowed = min(request, caps). Exits are never sized down.</span></li>
+    </ol>
+    <div class="how-grid">
+      <div>
+        <h3>From a terminal</h3>
+<pre class="code">pip install -e .
+gapguard check TSLAB --usd 2000 --wallet-plan     # live, public endpoints
+gapguard check MSTRon --usd 2000 --at 2026-09-20T16:00Z   # replay
+gapguard scenario MSTR --friday 2026-09-18
+gapguard gaps                                      # out-of-sample calibration
+gapguard portfolio 0xYourAddress                   # watch-only, BSC RPC</pre>
+      </div>
+      <div>
+        <h3>From an agent (Agent Skill)</h3>
+<pre class="code">skills/weekend-gap-guard/SKILL.md
+1. gapguard check &lt;SYMBOL&gt; --usd &lt;N&gt; --json --wallet-plan --exit-code
+2. BLOCK  → do not call baw; show the reason
+   REDUCE → use allowed_usd, not the request
+3. baw market-order quote ... (from agentic_wallet.quote_cmd)
+4. user confirms → baw market-order swap ...</pre>
+      </div>
+    </div>
+    <div class="limits">
+      <h3>What is real and what is not</h3>
+      <ul id="limits">
+        <li>Prices, candles, statuses and issuer limits come from the public Binance Wallet Skills endpoints (no key). Balances come from public BSC JSON-RPC. All replays use recorded hourly candles; the live board uses our own recordings.</li>
+        <li>The guard does not trade. The Agentic Wallet hand-off prints the <span class="mono">baw</span> commands; we could not run them because the Agentic Wallet requires a Binance account and the Binance app.</li>
+        <li>Historical venue status (pauses, earnings) is not available from the endpoints, so replays mark it "unknown"; the live path reads it.</li>
+        <li>The reference close is the Ondo token's 16:00 ET hourly close (Ondo tracks the stock within ~0.1 % in regular hours), not an exchange feed.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span>Weekend Gap Guard · MIT · built for BNB Hack: Tokenized Stocks Edition</span>
+  <span id="built"></span>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

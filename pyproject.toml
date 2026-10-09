@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weekend-gap-guard"
+version = "0.1.0"
+description = "Weekend Gap Guard: pre-trade risk gate for tokenized stocks (Ondo, xStocks, bStocks) on BNB Smart Chain"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Weekend Gap Guard team" }]
+keywords = ["bnb-chain", "bsc", "tokenized-stocks", "ondo", "xstocks", "bstocks", "risk", "agent-skill", "agentic-wallet"]
+dependencies = [
+    "httpx>=0.27",
+    "tzdata>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+video = ["playwright>=1.40", "imageio-ffmpeg>=0.5"]   # only for scripts/record_demo.py
+
+[project.scripts]
+gapguard = "gapguard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gapguard*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

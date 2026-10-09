@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.env
+.cache/
+out/
+# internal working notes (not part of the public repo)
+STATUS.md
+_internal/
+# runtime artefacts of the weekend recorder and history download
+data/live/*.log
+data/live/*.out
+data/live/*.pid
+data/history.log
+# internal Russian-language checklists for the team (not part of the public repo)
+GOTOVNOST.md
+PODACHA-FORMA.md

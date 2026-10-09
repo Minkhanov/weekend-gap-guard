@@ -1,0 +1,5 @@
+{
+  "phase_size_mult": {"closed": 0.2, "pre_close": 0.4},
+  "max_gross_x_closed": 0.3,
+  "dispersion_cut_pct": 0.005
+}

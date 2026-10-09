@@ -1,0 +1,75 @@
+1
+00:00:00,033 --> 00:00:04,433
+Weekend Gap Guard: a pre-trade risk gate for tokenized stocks on BNB Chain.
+
+2
+00:00:04,467 --> 00:00:12,333
+From Friday 16:00 to Monday 09:30 New York time the stock market prints nothing. Ondo, xStocks and bStocks tokens keep trading on BSC.
+
+3
+00:00:12,333 --> 00:00:20,100
+A stop-loss cannot fill at a price the market never prints. The guard answers every order with ALLOW, REDUCE or BLOCK, and says why.
+
+4
+00:00:20,100 --> 00:00:26,033
+All numbers come from real BSC data pulled from the public Binance Wallet endpoints, with no API key.
+
+5
+00:00:27,033 --> 00:00:36,567
+A real weekend, hour by hour: TSLA from all three issuers. The dashed line is Friday's close, the frozen reference; red and amber strips are the guard's verdicts.
+
+6
+00:00:36,567 --> 00:00:40,867
+Friday, market open: the stop can fill, so a 2,000 dollar buy is allowed.
+
+7
+00:00:40,867 --> 00:00:45,733
+Last hour before the close: you are about to carry weekend risk. The cap is halved.
+
+8
+00:00:45,733 --> 00:00:51,267
+Saturday: risk is priced on the weekend gap, 9.6% here, not on the 3% stop. 2,000 becomes 875.
+
+9
+00:00:51,267 --> 00:00:56,900
+The xStocks pool for TSLA on BSC had not traded for hours: no live mark, so the guard blocks it.
+
+10
+00:00:57,700 --> 00:01:03,167
+MSTR, the largest Monday gap in our record: +8.9%. The token climbs into Monday's pre-open...
+
+11
+00:01:03,167 --> 00:01:09,233
+...and once the weekend drift passes one sigma of a weekend move, the cap is halved again: 625 dollars.
+
+12
+00:01:10,233 --> 00:01:20,167
+The live board, recorded from the public endpoints: Ondo and bStocks agree within 0.15%. Most xStocks pools on BSC are stale or up to 20% off the stock, and are blocked.
+
+13
+00:01:21,167 --> 00:01:26,233
+Out of sample, no Monday gap in 540 ticker-weekends exceeded the guard's 99% estimate.
+
+14
+00:01:26,233 --> 00:01:32,867
+Saturday buys of 5,000 dollars over 129 real weekends: worst Monday loss minus 218 dollars raw, minus 38 guarded.
+
+15
+00:01:32,900 --> 00:01:38,600
+The same engine runs as a CLI and as an Agent Skill. This is a live call to the public endpoints.
+
+16
+00:01:38,600 --> 00:01:43,767
+It hands the allowed size to the Binance Agentic Wallet as a quote, with a slippage cap.
+
+17
+00:01:43,767 --> 00:01:52,167
+Checked against the real baw 1.10.0 CLI: the command parses and stops at sign-in. Signing needs a Binance account, so the guard never executes.
+
+18
+00:01:52,167 --> 00:01:55,433
+Everything is tested offline.
+
+19
+00:01:55,467 --> 00:02:00,467
+Weekend Gap Guard: size tokenized-stock trades for the market that is actually open.
