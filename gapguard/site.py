@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
-from .market import calendar as cal
 from .risk.account import demo_account
 from .risk.engine import OrderIntent, evaluate
 from .risk.policy import GuardPolicy

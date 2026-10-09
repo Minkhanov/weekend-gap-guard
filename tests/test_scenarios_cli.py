@@ -1,6 +1,6 @@
 """Weekend replay, out-of-sample calibration, stress, and the CLI — on a synthetic book (no network)."""
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import timezone
 
 import pytest
 from test_gap_and_views import START, hourly, stepped_price

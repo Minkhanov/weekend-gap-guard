@@ -1,6 +1,5 @@
 """Gap model, history replay without look-ahead, and parsing of real recorded API answers."""
 import json
-import math
 from datetime import datetime, timedelta, timezone
 
 import pytest
