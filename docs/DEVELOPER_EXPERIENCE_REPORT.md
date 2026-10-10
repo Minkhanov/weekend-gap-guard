@@ -25,9 +25,9 @@ the Transaction API dry-run, b402, BNB Agent Studio.
    *Connect Wallet*. There is no email or GitHub option.
 2. *Connect Wallet* tab immediately shows: *"Wallet login is not available in your region. Based on your IP address this
    service cannot be provided."* with a link to the prohibited-regions page (2026-10-09 ~07:00 UTC).
-3. The check is IP-based and our traffic went through a VPN exit node, which is the likely trigger. That is the rule
-   working as designed — but a developer behind a corporate VPN or a cloud egress cannot even see what the portal offers,
-   the message does not say which region was detected, and the *Login Binance* tab shows no warning at all.
+3. The check is IP-based. That is the rule working as designed — but a developer behind a corporate network or a
+   cloud egress cannot even see what the portal offers, the message does not say which region was detected, and the
+   *Login Binance* tab shows no warning at all.
 4. The other route, *Login Binance*, requires a Binance account. We do not use one, so there was no path to a key for us.
 
 **Where we got stuck:** the Introduction page (https://web3.binance.com/en/dev-docs/introduction) lists the five modules
